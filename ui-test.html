@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="stylesheet" type="text/css" href="css/style.css" />
+        <script type="text/javascript" src="js/vendors/lodash/lodash.min.js"></script>
+        <script type="text/javascript">
+            function createButton(className, label, icon) {
+                var button = document.createElement('button');
+                button.className = className;
+
+                if(icon) {
+                    var i = document.createElement('i');
+                    i.className = 'fa fa-' + icon + ' fa-sw';
+                    button.appendChild(i);
+                }
+
+                var span = document.createElement('span');
+                span.innerText = label;
+                button.appendChild(span);
+
+                return button;
+            };
+
+            function createLabelValue(className, label, value) {
+                var span = document.createElement('span');
+                span.className = 'label-value ' + className;
+                var spanLabel = document.createElement('span');
+                spanLabel.className = 'label';
+                spanLabel.innerText = label + ' : ';
+                span.appendChild(spanLabel);
+                var spanValue = document.createElement('span');
+                spanValue.className = 'value';
+                spanValue.innerText = value;
+                span.appendChild(spanValue);
+
+                span.setValue = function(value) {
+                    spanValue.innerText = value;
+                };
+
+                return span;
+            }
+
+            function createPopup(className, content) {
+                var popup = document.createElement('div');
+                popup.className = 'popup ' + className;
+                var contentDiv = document.createElement('div');
+                contentDiv.className = 'content';
+                contentDiv.appendChild(content);
+                popup.appendChild(contentDiv);
+
+                return popup
+            }
+        </script>
+    </head>
+    <body>
+
+    <div class="sidebar" id="static">
+
+        <div class="buttons">
+            <span class="label-value bpm"><span class="label">BPM : </span><span class="value">120.80</span></span>
+
+            <span class="label-value duration"><span class="label">Duration : </span><span class="value">00:00</span></span>
+
+            <button class="start"><i class="fa fa-play fa-fw"></i>Start</button>
+            <button class="stop"><i class="fa fa-stop fa-fw"></i>Stop</button>
+            <button class="startRecording"><i class="fa fa-circle fa-fw"></i>Record</button>
+            <button class="stopRecording"><i class="fa fa-download fa-fw"></i>Stop recording</button>
+        </div>
+
+
+
+
+
+    </div>
+    <div class="main"></div>
+
+    <!--
+    <div id="dynamic">
+
+    </div>
+
+    <script>
+        var container = document.getElementById('dynamic');
+
+        container.appendChild(createButton('start', 'Start'));
+        container.appendChild(createButton('stop', 'Stop'));
+        container.appendChild(createButton('startRecording', 'Record'));
+        container.appendChild(createButton('stopRecording', 'Stop recording'));
+
+        container.appendChild(createLabelValue('bpm', 'BPM', '120.80'));
+        container.appendChild(createLabelValue('duration', 'Duration', '00:00'));
+    </script>
+    -->
+        <!--
+        <div class="popup">
+            <div class="content">
+                pp
+            </div>
+        </div>
+        -->
+    </body>
+</html>

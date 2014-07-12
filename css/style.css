@@ -1,5 +1,52 @@
-button {
+@import url(//fonts.googleapis.com/css?family=Lato:300,400,700);
+@import url(//maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css);
 
+body {
+    font-family: 'Lato', sans-serif;
+    font-weight:400;
+    background:#000;
+}
+
+body, p, ul, ol, div, section {
+    padding: 0;
+    margin:0;
+}
+
+
+/* region Button */
+
+button {
+    font-family: 'Lato', sans-serif;
+    position:relative;
+    display:block;
+    padding:0 10px;
+    background-color:#F8F8F8;
+    border:none;
+    color: #444;
+    height:30px;
+    left:0px;
+    right:0px;
+    line-height:28px;
+    letter-spacing: 1px;
+    font-size: 15px;
+    transition:background-color .5s, border .5s;
+    font-weight:300;
+}
+
+button i {
+    color: #BBB;
+    transition: color .5s;
+    font-size: 14px;
+    margin-right: 5px;
+}
+
+button:hover {
+    background-color:#F2F2F2;
+    color: #000;
+}
+
+button:hover i {
+    color: #000;
 }
 
 button.start {
@@ -18,14 +65,121 @@ button.stopRecording {
 
 }
 
-.duration {
+/* endregion */
 
+/* region LabelValue */
+
+.label-value {
+    display:inline-block;
+    min-width:200px;
+    height:30px;
+    line-height:30px;
+    background:#FFF;
 }
 
-.duration .minutes {
-
+.label-value .label {
+    padding:0 7px;
+    display:inline-block;
+    font-weight: 300;
+    background-color:#F8F8F8;
+    transition:background-color .5s;
 }
 
-.duration .seconds {
-
+.label-value:hover .label {
+    background-color:#F2F2F2;
 }
+
+.label-value .value {
+    padding:0 5px 0 10px;
+    display:inline-block;
+    right:0;
+    font-weight: 400;
+    letter-spacing: 1px;
+}
+
+/* endregion */
+
+/* region Sidebar */
+
+.sidebar {
+    position:fixed;
+    display:block;
+    left:0;
+    width:200px;
+    height:100%;
+    background-color:#E9E9E9;
+    transition:background-color .5s;
+}
+
+.sidebar:hover {
+    background-color:#FFFFFF;
+}
+
+.sidebar .buttons {
+    position: absolute;
+    bottom: 0;
+    left:0;
+    right:0;
+}
+
+/* endregion */
+
+/* region Main */
+
+.main {
+    position:fixed;
+    left:200px;
+    right:0;
+    height:100%;
+    border-left:2px solid #D6D6D6;
+    background-color:#E9E9E9;
+    transition:background-color .5s;
+}
+
+.main:hover {
+    background-color:#FFFFFF;
+}
+
+/* endregion */
+
+/* region Popup */
+
+.popup {
+    position:fixed;
+    display:block;
+    z-index:10;
+    top:0;
+    left:0;
+    height:100%;
+    width:100%;
+    background:rgba(255,255,255,0.75);
+}
+
+.popup:before {
+    content: "X";
+    position:absolute;
+    top : 20px;
+    right : 20px;
+    width:30px;
+    height:30px;
+    line-height:30px;
+    text-align:center;
+    background-color:rgba(0,0,0,0.03);
+}
+
+.popup .content {
+    position:absolute;
+    left: 40px;
+    top : 60px;
+    min-height: 120px;
+    min-width:500px;
+    padding:10px;
+    background-color:rgba(0,0,0,0.03);
+    transition : background-color 0.2s;
+}
+
+.popup .content:hover {
+    background-color:rgba(0,0,0,0.05);
+}
+
+/* endregion */
