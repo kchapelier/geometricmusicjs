@@ -1,10 +1,12 @@
 (function(App) {
 	"use strict";
 
-	var arrayResize = function(array, size) {
+	var arrayResize = function(array, size, filler) {
 		var delta = size - array.length;
 		if(delta > 0) {
-			array.length = size; //force the size of the array
+			for(var i = 0; i < delta; i++) {
+				array.push(filler); //pad with filler
+			}
 		} else {
 			array.splice(size, -delta); //remove {delta} excedentary elements
 		}
@@ -53,12 +55,13 @@
 
 	Shape.prototype.setSegmentsNumber = function(number) {
 		this.segmentsNumber = Math.max(1, number);
-		arrayResize(this.segmentsReaders, this.segmentsNumber);
+		arrayResize(this.segmentsReaders, this.segmentsNumber, App.Readers['default']);
 
 		return this;
 	};
 
 	Shape.prototype.setSegmentReader = function(index, reader) {
+		reader = typeof reader === 'function' ? reader : App.Readers.silent;
 		index = Math.max(0, Math.min(index, this.segmentsNumber - 1));
 		this.segmentsReaders[index] = reader;
 
@@ -66,15 +69,22 @@
 	};
 
 	Shape.prototype.getNextSample = function(channel, samplesPerMeasure) {
-		var sampleValue = 0;
+		//TODO do this out of the audio loop
+		var samplesPerSegment = samplesPerMeasure * Math.pow(2, this.size) / this.segmentsNumber;
 
-		if(this.audioBuffer.length > this.currentSegmentPosition * this.speed) {
-			sampleValue = this.audioBuffer.getSample(this.currentSegmentPosition * this.speed, channel) * this.gain;
-		}
+		var reader = this.segmentsReaders[this.currentSegment];
+
+		var sampleValue = reader(
+			this.audioBuffer,
+			channel,
+			this.currentSegmentPosition,
+			this.speed,
+			samplesPerSegment
+		);
+
+		sampleValue*= this.gain;
 
 		this.currentSegmentPosition++;
-
-		var samplesPerSegment = samplesPerMeasure * Math.pow(2, this.size) / this.segmentsNumber;
 
 		if(this.currentSegmentPosition > samplesPerSegment) {
 			this.currentSegmentPosition = this.currentSegmentPosition % samplesPerSegment;

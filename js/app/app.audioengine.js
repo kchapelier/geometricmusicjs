@@ -3,6 +3,7 @@
 
 	var AudioEngine = function(bufferSize) {
 		this.playing = false;
+		this.recording = false;
 		this.sampleRate = Aural.Utils.Support.getSampleRate();
 		this.bufferSize = bufferSize || 1024;
 		this.shapeCollection = [];
@@ -21,6 +22,7 @@
 	AudioEngine.prototype.bufferSize = null;
 	AudioEngine.prototype.node = null;
 	AudioEngine.prototype.playing = null;
+	AudioEngine.prototype.recording = null;
 	AudioEngine.prototype.bpm = null;
 	AudioEngine.prototype.samplesPerMeasure = null;
 	AudioEngine.prototype.recorder = null;
@@ -66,6 +68,15 @@
 		return sampleValue;
 	};
 
+	AudioEngine.prototype.start = function() {
+		this.playing = true;
+	};
+
+	AudioEngine.prototype.stop = function() {
+		this.stopRecording();
+		this.playing = false;
+	};
+
 	AudioEngine.prototype.startRecording = function() {
 		if(!this.recorder) {
 			this.recorder = new Recorder(this.node, {
@@ -75,10 +86,11 @@
 		}
 
 		this.recorder.record();
+		this.recording = true;
 	};
 
 	AudioEngine.prototype.stopRecording = function() {
-		if(this.recorder) {
+		if(this.recorder && this.recording) {
 			this.recorder.stop();
 
 			this.recorder.exportWAV(function(blob) {
@@ -87,8 +99,8 @@
 				}
 			});
 
-
 			this.recorder.clear();
+			this.recording = false;
 		}
 	};
 

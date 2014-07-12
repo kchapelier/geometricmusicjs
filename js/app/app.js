@@ -18,6 +18,5 @@ window.addEventListener('load', function() {
 	}, function() {
 		sm = new App.ShapeManager(bb);
 		ae.setShapeCollection(sm.getCollection());
-		ae.playing = true;
 	});
 });
