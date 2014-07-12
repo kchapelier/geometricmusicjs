@@ -1,5 +1,7 @@
 "use strict";
 
+var App = App || {};
+
 var ac = Aural.Utils.Support.getAudioContext();
 
 window.addEventListener('load', function() {
