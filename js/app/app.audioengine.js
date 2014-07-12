@@ -23,6 +23,7 @@
 	AudioEngine.prototype.playing = null;
 	AudioEngine.prototype.bpm = null;
 	AudioEngine.prototype.samplesPerMeasure = null;
+	AudioEngine.prototype.recorder = null;
 
 	AudioEngine.prototype.setBpm = function(bpm) {
 		this.bpm = Math.min(999, Math.max(10, bpm));
@@ -63,6 +64,32 @@
 		}
 
 		return sampleValue;
+	};
+
+	AudioEngine.prototype.startRecording = function() {
+		if(!this.recorder) {
+			this.recorder = new Recorder(this.node, {
+				workerPath : 'js/vendors/recorderjs/recorderWorker.js',
+				bufferLen : 4096
+			});
+		}
+
+		this.recorder.record();
+	};
+
+	AudioEngine.prototype.stopRecording = function() {
+		if(this.recorder) {
+			this.recorder.stop();
+
+			this.recorder.exportWAV(function(blob) {
+				if(blob) {
+					Recorder.forceDownload(blob);
+				}
+			});
+
+
+			this.recorder.clear();
+		}
 	};
 
 	App.AudioEngine = AudioEngine;
