@@ -14,14 +14,24 @@
 		this.segmentsReaders = [];
 		this.audioBuffer = audioBuffer;
 
+		this.pan = 0;
+		this.gain = 1;
+		this.currentSegmentPosition = 0;
+		this.currentSegment = 0;
+
 		this.setSegmentsNumber(segmentsNumber);
 		this.setSize(size);
 	};
 
+	Shape.prototype.gain = null;
+	Shape.prototype.pan = null;
 	Shape.prototype.size = null;
 	Shape.prototype.segmentsNumber = null;
 	Shape.prototype.segmentsReaders = null;
 	Shape.prototype.audioBuffer = null;
+
+	Shape.prototype.currentSegment = null;
+	Shape.prototype.currentSegmentPosition = null;
 
 	Shape.prototype.setSize = function(size) {
 		this.size = size;
@@ -41,6 +51,26 @@
 		this.segmentsReaders[index] = reader;
 
 		return this;
+	};
+
+	Shape.prototype.getNextSample = function(channel, samplesPerMeasure) {
+		var sampleValue = 0;
+
+		if(this.audioBuffer.length > this.currentSegmentPosition) {
+			sampleValue = this.audioBuffer.getSample(this.currentSegmentPosition, channel) * this.gain;
+		}
+
+		this.currentSegmentPosition++;
+
+		var samplesPerSegment = samplesPerMeasure * Math.pow(2, this.size) / this.segmentsNumber;
+
+		if(this.currentSegmentPosition > samplesPerSegment) {
+			this.currentSegmentPosition = this.currentSegmentPosition % samplesPerSegment;
+
+			this.currentSegment = (this.currentSegment + 1) % this.segmentsNumber;
+		}
+
+		return sampleValue;
 	};
 
 	App.Shape = Shape;

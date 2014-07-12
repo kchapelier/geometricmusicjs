@@ -2,11 +2,14 @@
 
 var App = App || {};
 
-var bb,
+var ae,
+	bb,
 	sm;
 
 window.addEventListener('load', function() {
-	console.log('"I\'m loaded now" says', window, '.');
+	ae = new App.AudioEngine();
+
+	console.log('"I\'m ready now" says', ae, '.');
 
 	bb = new App.BufferBank();
 	bb.loadSamples({
@@ -14,6 +17,7 @@ window.addEventListener('load', function() {
 		'test2' : 'samples/test2.wav'
 	}, function() {
 		sm = new App.ShapeManager(bb);
-		console.log(bb, sm);
+		ae.setShapeCollection(sm.getCollection());
+		ae.playing = true;
 	});
 });

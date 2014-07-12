@@ -9,6 +9,10 @@
 	ShapeManager.prototype.bufferBank = null;
 	ShapeManager.prototype.collection = null;
 
+	ShapeManager.prototype.getCollection = function() {
+		return this.collection;
+	};
+
 	ShapeManager.prototype.add = function(size, numberSegments, bufferName) {
 		var shape = null;
 		var buffer = this.bufferBank.getBuffer(bufferName);
