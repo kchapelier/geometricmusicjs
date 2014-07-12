@@ -13,8 +13,11 @@ window.addEventListener('load', function() {
 
 	bb = new App.BufferBank();
 	bb.loadSamples({
-		'test1' : 'samples/test.wav',
-		'test2' : 'samples/test2.wav'
+		'8bit01' : 'samples/8bit01.wav',
+		'chroma01' : 'samples/chroma01.wav',
+		'chroma02' : 'samples/chroma02.wav',
+		'chroma03' : 'samples/chroma03.wav',
+		'piano01' : 'samples/piano01.wav'
 	}, function() {
 		sm = new App.ShapeManager(bb);
 		ae.setShapeCollection(sm.getCollection());

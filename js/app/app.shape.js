@@ -16,7 +16,7 @@
 		this.segmentsReaders = [];
 		this.audioBuffer = audioBuffer;
 
-		this.setTuning(-5);
+		this.setTuning(0);
 
 		this.pan = 0;
 		this.gain = 1;
@@ -74,13 +74,17 @@
 
 		var reader = this.segmentsReaders[this.currentSegment];
 
-		var sampleValue = reader(
-			this.audioBuffer,
-			channel,
-			this.currentSegmentPosition,
-			this.speed,
-			samplesPerSegment
-		);
+		var sampleValue = 0;
+
+		if(reader) {
+			sampleValue = reader(
+				this.audioBuffer,
+				channel,
+				this.currentSegmentPosition,
+				this.speed,
+				samplesPerSegment
+			);
+		}
 
 		sampleValue*= this.gain;
 
