@@ -14,6 +14,8 @@
 		this.segmentsReaders = [];
 		this.audioBuffer = audioBuffer;
 
+		this.setTuning(-5);
+
 		this.pan = 0;
 		this.gain = 1;
 		this.currentSegmentPosition = 0;
@@ -23,9 +25,12 @@
 		this.setSize(size);
 	};
 
-	Shape.prototype.gain = null;
-	Shape.prototype.pan = null;
-	Shape.prototype.size = null;
+	Shape.prototype.gain = null; //volume (0 : silent, 1 : loud)
+	Shape.prototype.pan = null; //pan (-1 : hard left, 0 : center, 1 : hard right)
+	Shape.prototype.size = null; // number of measures
+	Shape.prototype.tuning = null; // tuning in semitones (negative : lower pitch, positive : higher pitch)
+	Shape.prototype.speed = null; // sample reading speed, calculated from the tuning
+
 	Shape.prototype.segmentsNumber = null;
 	Shape.prototype.segmentsReaders = null;
 	Shape.prototype.audioBuffer = null;
@@ -35,6 +40,13 @@
 
 	Shape.prototype.setSize = function(size) {
 		this.size = size;
+
+		return this;
+	};
+
+	Shape.prototype.setTuning = function(semitones) {
+		this.tuning = semitones;
+		this.speed = 1 * (Math.pow(2, semitones / 12));
 
 		return this;
 	};
@@ -56,8 +68,8 @@
 	Shape.prototype.getNextSample = function(channel, samplesPerMeasure) {
 		var sampleValue = 0;
 
-		if(this.audioBuffer.length > this.currentSegmentPosition) {
-			sampleValue = this.audioBuffer.getSample(this.currentSegmentPosition, channel) * this.gain;
+		if(this.audioBuffer.length > this.currentSegmentPosition * this.speed) {
+			sampleValue = this.audioBuffer.getSample(this.currentSegmentPosition * this.speed, channel) * this.gain;
 		}
 
 		this.currentSegmentPosition++;
