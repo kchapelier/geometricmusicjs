@@ -19,7 +19,7 @@
 		this.setTuning(0);
 
 		this.pan = 0;
-		this.gain = 1;
+		this.gain = 0.5;
 		this.currentSegmentPosition = 0;
 		this.currentSegment = 0;
 
@@ -29,7 +29,7 @@
 
 	Shape.prototype.gain = null; //volume (0 : silent, 1 : loud)
 	Shape.prototype.pan = null; //pan (-1 : hard left, 0 : center, 1 : hard right)
-	Shape.prototype.size = null; // number of measures
+	Shape.prototype.size = null; // number of measures (1 : 1, 2 : 2, 3 ; 4, 4 : 8)
 	Shape.prototype.tuning = null; // tuning in semitones (negative : lower pitch, positive : higher pitch)
 	Shape.prototype.speed = null; // sample reading speed, calculated from the tuning
 
@@ -41,7 +41,7 @@
 	Shape.prototype.currentSegmentPosition = null;
 
 	Shape.prototype.setSize = function(size) {
-		this.size = size;
+		this.size = Math.max(1, size);
 
 		return this;
 	};
@@ -82,7 +82,7 @@
 
 	Shape.prototype.getNextSamples = function(samplesPerMeasure) {
 		//TODO PERF: do this out of the audio loop
-		var samplesPerSegment = samplesPerMeasure * Math.pow(2, this.size) / this.segmentsNumber;
+		var samplesPerSegment = samplesPerMeasure * Math.pow(2, this.size - 1) / this.segmentsNumber;
 
 		var reader = this.segmentsReaders[this.currentSegment];
 

@@ -13,18 +13,18 @@ Strict conformity to the original application is not the point (its source code 
 
 ### Priorities :
 
-* The audio engine is the top priority.
-* Builtin sample library.
-* Shapes from 1 to 8 segments.
-* Different 'vector' per segments : 'silent', 'normal', 'reverse'
-* Precise tuning per shape (replacing the 'down' vector, thus enabling to play a sample in reverse and down 7 semitones for example).
-* Output saving as WAV
+* <del>The audio engine is the top priority.</del>
+* <del>Builtin sample library.</del>
+* <del>Shapes from 1 to 8 segments.</del>
+* <del>Different 'vector' per segments : 'silent', 'normal', 'reverse'</del>
+* <del>Precise tuning per shape (replacing the 'down' vector, thus enabling to play a sample in reverse and down 7 semitones for example).</del>
+* <del>Output saving as WAV</del>
 * Minimal UI : premature UI considerations are considered harmful (I just [made this up](http://modelviewculture.com/pieces/the-making-of-myths)).
 
 ### Extras (if time permits) :
 
 * Being able to add samples in the library by microphone recording.
-* More vectors : 'X repeats', 'vinyl scratch', 'vinyl stop', 'vinyl start', etc.
+* More vectors : <del>'X repeats'</del>, 'vinyl scratch', 'vinyl stop', 'vinyl start', etc.
 * Time offset per shape.
 * Making it visually appealing.
 

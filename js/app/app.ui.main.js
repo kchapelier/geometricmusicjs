@@ -79,8 +79,10 @@
 		fragment.appendChild(this.startRecordingButton);
 		fragment.appendChild(this.stopRecordingButton);
 
-		var buttons = document.getElementById('buttons');
-		buttons.appendChild(fragment);
+		this.buttons = document.getElementById('buttons');
+		this.buttons.appendChild(fragment);
+
+		this.panel = document.getElementById('panel');
 	};
 
 	Main.prototype.refreshButtons = function() {
@@ -93,11 +95,23 @@
 		this.stopRecordingButton.style.display = recording ? '' : 'none';
 	};
 
+	Main.prototype.showPanel = function(element) {
+		this.panel.innerHTML = '';
+		this.panel.appendChild(element);
+	};
+
+	Main.prototype.shapeSelectionHandler = function(shape) {
+		this.showPanel(shape.panel.element);
+
+		//TODO unselect other shape
+	};
+
 	Main.prototype.plusHandler = function() {
-		var shape = this.shapeManager.add(2, 4, 'piano01');
-		var shapeElement = new App.UI.Shape(200, shape, this.container);
+		var shape = this.shapeManager.add(1, 2, 'chroma03');
+		var shapeElement = new App.UI.Shape(200, shape, this.container, this.shapeSelectionHandler.bind(this));
 		this.container.appendChild(shapeElement.element);
-	}
+		shapeElement.select(true);
+	};
 
 	Main.prototype.startHandler = function() {
 		this.audioEngine.start();
@@ -123,4 +137,7 @@
 
 	App.UI = App.UI || {};
 	App.UI.Main = Main;
+	App.UI.createButton = createButton;
+	App.UI.createLabelValue = createLabelValue;
+	App.UI.createPopup = createPopup;
 })(App || {});

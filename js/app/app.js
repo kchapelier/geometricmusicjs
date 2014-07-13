@@ -1,17 +1,20 @@
 "use strict";
 
+//TODO fix weird clipping issue with the size (apparently ?)
+//TODO move all the dom structure to the javascript, for bragging rights
+//TODO see if it is possible to remove the lodash dependency
+//TODO make a grunt script to uglify vendors/ and app/ separately
+//TODO include javascript at the end of the body
+
 var App = App || {};
 
 var ae,
 	bb,
-	sm;
+	sm,
+	main;
 
 window.addEventListener('load', function() {
 	ae = new App.AudioEngine();
-
-	var start
-
-	console.log('"I\'m ready now" says', ae, '.');
 
 	bb = new App.BufferBank();
 	bb.loadSamples({
@@ -24,6 +27,6 @@ window.addEventListener('load', function() {
 		sm = new App.ShapeManager(bb);
 		ae.setShapeCollection(sm.getCollection());
 
-		new App.UI.Main(ae, bb, sm);
+		main = new App.UI.Main(ae, bb, sm);
 	});
 });
