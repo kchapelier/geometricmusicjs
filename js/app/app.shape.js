@@ -68,25 +68,31 @@
 		return this;
 	};
 
-	Shape.prototype.getNextSample = function(channel, samplesPerMeasure) {
+	Shape.prototype.getNextSamples = function(samplesPerMeasure) {
 		//TODO do this out of the audio loop
 		var samplesPerSegment = samplesPerMeasure * Math.pow(2, this.size) / this.segmentsNumber;
 
 		var reader = this.segmentsReaders[this.currentSegment];
 
-		var sampleValue = 0;
+		var sampleValue = [0,0];
 
 		if(reader) {
-			sampleValue = reader(
+			sampleValue[0] = reader(
 				this.audioBuffer,
-				channel,
+				0,
 				this.currentSegmentPosition,
 				this.speed,
 				samplesPerSegment
-			);
-		}
+			) * this.gain;
 
-		sampleValue*= this.gain;
+			sampleValue[1] = reader(
+				this.audioBuffer,
+				1,
+				this.currentSegmentPosition,
+				this.speed,
+				samplesPerSegment
+			) * this.gain;
+		}
 
 		this.currentSegmentPosition++;
 

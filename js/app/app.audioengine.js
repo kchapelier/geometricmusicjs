@@ -11,16 +11,22 @@
 		this.setBpm(120);
 
 		this.audioContext = Aural.Utils.Support.getAudioContext();
-		this.node = this.audioContext.createScriptProcessor(this.bufferSize, 0, 1);
-		this.node.onaudioprocess = this.audioProcessHandler.bind(this);
-		this.node.connect(this.audioContext.destination);
+		this.compressor = this.audioContext.createDynamicsCompressor();
+		this.compressor.attack.value = 0.02;
+		this.compressor.threshold.value = -20;
+		this.compressor.knee.value = 35;
+		this.processor = this.audioContext.createScriptProcessor(this.bufferSize, 0, 2);
+		this.processor.onaudioprocess = this.audioProcessHandler.bind(this);
+		this.compressor.connect(this.audioContext.destination);
+		this.processor.connect(this.compressor);
 	};
 
 	AudioEngine.prototype.shapeCollection = null;
 	AudioEngine.prototype.audioContext = null;
 	AudioEngine.prototype.sampleRate = null;
 	AudioEngine.prototype.bufferSize = null;
-	AudioEngine.prototype.node = null;
+	AudioEngine.prototype.processor = null;
+	AudioEngine.prototype.compressor = null;
 	AudioEngine.prototype.playing = null;
 	AudioEngine.prototype.recording = null;
 	AudioEngine.prototype.bpm = null;
@@ -38,34 +44,35 @@
 
 	AudioEngine.prototype.audioProcessHandler = function(e) {
 		var outputBuffer = e.outputBuffer,
-			channel,
-			channelData,
 			sample,
-			sampleValue;
+			sampleValues;
 
-		for (channel = 0; channel < outputBuffer.numberOfChannels; channel++) {
-			channelData = outputBuffer.getChannelData(channel);
+		var channelLeft = outputBuffer.getChannelData(0);
+		var channelRight = outputBuffer.getChannelData(1);
 
-			for (sample = 0; sample < outputBuffer.length; sample++) {
-				sampleValue = this.playing ? this.getSampleValue(channel, sample) : 0;
+		for (sample = 0; sample < outputBuffer.length; sample++) {
+			sampleValues = this.playing ? this.getSampleValues(sample) : 0;
 
-				channelData[sample] = sampleValue;
-			}
+			channelLeft[sample] = sampleValues[0];
+			channelRight[sample] = sampleValues[1];
 		}
 	};
 
-	AudioEngine.prototype.getSampleValue = function(channel, sample) {
-		var sampleValue = 0,
+	AudioEngine.prototype.getSampleValues = function(sample) {
+		var sampleValues = [0, 0],
 			shapeIndex,
 			shape;
 
 		for(shapeIndex = 0; shapeIndex < this.shapeCollection.length; shapeIndex++) {
 			shape = this.shapeCollection[shapeIndex];
 
-			sampleValue+= shape.getNextSample(channel, this.samplesPerMeasure);
+			var shapeValues = shape.getNextSamples(this.samplesPerMeasure);
+
+			sampleValues[0]+= shapeValues[0];
+			sampleValues[1]+= shapeValues[1];
 		}
 
-		return sampleValue;
+		return sampleValues;
 	};
 
 	AudioEngine.prototype.start = function() {
@@ -79,7 +86,7 @@
 
 	AudioEngine.prototype.startRecording = function() {
 		if(!this.recorder) {
-			this.recorder = new Recorder(this.node, {
+			this.recorder = new Recorder(this.compressor, {
 				workerPath : 'js/vendors/recorderjs/recorderWorker.js',
 				bufferLen : 4096
 			});
