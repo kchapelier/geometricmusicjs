@@ -9,6 +9,8 @@ var ae,
 window.addEventListener('load', function() {
 	ae = new App.AudioEngine();
 
+	var start
+
 	console.log('"I\'m ready now" says', ae, '.');
 
 	bb = new App.BufferBank();
@@ -21,5 +23,7 @@ window.addEventListener('load', function() {
 	}, function() {
 		sm = new App.ShapeManager(bb);
 		ae.setShapeCollection(sm.getCollection());
+
+		new App.UI.Main(ae, bb, sm);
 	});
 });

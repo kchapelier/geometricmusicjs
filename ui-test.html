@@ -14,54 +14,10 @@
         <script type="text/javascript" src="js/app/app.shape.js"></script>
         <script type="text/javascript" src="js/app/app.shapemanager.js"></script>
         <script type="text/javascript" src="js/app/app.bufferbank.js"></script>
+        <script type="text/javascript" src="js/app/app.ui.main.js"></script>
         <script type="text/javascript" src="js/app/app.ui.shape.js"></script>
         <script type="text/javascript">
-            function createButton(className, label, icon) {
-                var button = document.createElement('button');
-                button.className = className;
 
-                if(icon) {
-                    var i = document.createElement('i');
-                    i.className = 'fa fa-' + icon + ' fa-sw';
-                    button.appendChild(i);
-                }
-
-                var span = document.createElement('span');
-                span.innerText = label;
-                button.appendChild(span);
-
-                return button;
-            };
-
-            function createLabelValue(className, label, value) {
-                var span = document.createElement('span');
-                span.className = 'label-value ' + className;
-                var spanLabel = document.createElement('span');
-                spanLabel.className = 'label';
-                spanLabel.innerText = label + ' : ';
-                span.appendChild(spanLabel);
-                var spanValue = document.createElement('span');
-                spanValue.className = 'value';
-                spanValue.innerText = value;
-                span.appendChild(spanValue);
-
-                span.setValue = function(value) {
-                    spanValue.innerText = value;
-                };
-
-                return span;
-            }
-
-            function createPopup(className, content) {
-                var popup = document.createElement('div');
-                popup.className = 'popup ' + className;
-                var contentDiv = document.createElement('div');
-                contentDiv.className = 'content';
-                contentDiv.appendChild(content);
-                popup.appendChild(contentDiv);
-
-                return popup
-            }
 
             function runSnap() {
                 var container = document.getElementById('container');
@@ -104,9 +60,7 @@
 
 
     </div>
-    <div class="main" id="container">
-        <svg id="svg" width="200" height="200" style="margin: 30px 0 0 60px;"></svg>
-    </div>
+    <div class="main" id="container"></div>
 
 
     <!--
