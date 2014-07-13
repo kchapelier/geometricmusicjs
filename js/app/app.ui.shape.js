@@ -44,20 +44,32 @@
 			stroke: "#000",
 			strokeWidth: 2
 		});
-
-		this.shape.animate({
-			fillOpacity: 1
-		}, 500);
 	};
 
-	var Shape = function(width, size, segments, container) {
+	ShapeSvg.prototype.fill = function() {
+		this.shape.animate({
+			fillOpacity: 1
+		}, 250);
+	};
+
+	ShapeSvg.prototype.unfill = function() {
+		this.shape.animate({
+			fillOpacity: 0
+		}, 200);
+	};
+
+	var Shape = function(width, shape, container) {
 		this.createElement(width);
-		this.svg = new ShapeSvg(width, size, segments);
+		this.shape = shape;
+		this.selected = false;
+		this.svg = new ShapeSvg(width, shape.size, shape.segmentsNumber);
 		this.element.appendChild(this.svg.svg.node);
 		this.draggable = new Draggabilly(this.element, {
 			containment : container,
 			handle : 'polygon, circle'
 		});
+
+		this.setEvents();
 	};
 
 	Shape.prototype.createElement = function(width) {
@@ -67,10 +79,28 @@
 		this.element.style.left = '0px';
 		this.element.style.width = width + 'px';
 		this.element.style.height = width + 'px';
+	};
 
-		this.element.addEventListener('click', function(e) {
-			e.stopPropagation();
+	Shape.prototype.setEvents = function() {
+		this.element.addEventListener('mousedown', function(e) {
+			this.select(true);
 		}.bind(this));
+
+		this.draggable.on('dragMove', function(d, e) {
+			var pan = Math.min(Math.max(0, d.position.x / (d.containerSize.innerWidth - d.size.width)), 1) * 2 -1;
+			var gain = 1 - Math.min(Math.max(0, d.position.y / (d.containerSize.innerHeight - d.size.height)), 1);
+			this.shape.setGain(gain).setPan(pan);
+		}.bind(this));
+	};
+
+	Shape.prototype.select = function(selected) {
+		if(selected !== this.selected) {
+			if (selected) {
+				this.svg.fill();
+			} else {
+				this.svg.unfill();
+			}
+		}
 	};
 
 	App.UI = App.UI || {};

@@ -56,11 +56,14 @@
 	};
 
 	Main.prototype.generateElements = function() {
+		this.container = document.getElementById('container');
+		this.plusButton = createButton('plus', 'Add a shape', 'plus');
 		this.startButton = createButton('start', 'Start', 'play');
 		this.stopButton = createButton('stop', 'Stop', 'stop');
 		this.startRecordingButton = createButton('startRecording', 'Record', 'circle');
 		this.stopRecordingButton = createButton('stopRecording', 'Stop recording', 'circle-o');
 
+		this.plusButton.addEventListener('click', this.plusHandler.bind(this));
 		this.startButton.addEventListener('click', this.startHandler.bind(this));
 		this.stopButton.addEventListener('click', this.stopHandler.bind(this));
 		this.startRecordingButton.addEventListener('click', this.startRecordingHandler.bind(this));
@@ -70,6 +73,7 @@
 
 		var fragment = document.createDocumentFragment();
 
+		fragment.appendChild(this.plusButton);
 		fragment.appendChild(this.startButton);
 		fragment.appendChild(this.stopButton);
 		fragment.appendChild(this.startRecordingButton);
@@ -88,6 +92,12 @@
 		this.startRecordingButton.style.display = recording ? 'none' : '';
 		this.stopRecordingButton.style.display = recording ? '' : 'none';
 	};
+
+	Main.prototype.plusHandler = function() {
+		var shape = this.shapeManager.add(2, 4, 'piano01');
+		var shapeElement = new App.UI.Shape(200, shape, this.container);
+		this.container.appendChild(shapeElement.element);
+	}
 
 	Main.prototype.startHandler = function() {
 		this.audioEngine.start();

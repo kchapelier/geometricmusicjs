@@ -53,6 +53,18 @@
 		return this;
 	};
 
+	Shape.prototype.setGain = function(gain) {
+		this.gain = Math.min(1, Math.max(0, gain));
+
+		return this;
+	};
+
+	Shape.prototype.setPan = function(pan) {
+		this.pan = Math.min(1, Math.max(-1, pan));
+
+		return this;
+	};
+
 	Shape.prototype.setSegmentsNumber = function(number) {
 		this.segmentsNumber = Math.max(1, number);
 		arrayResize(this.segmentsReaders, this.segmentsNumber, App.Readers['default']);
@@ -69,7 +81,7 @@
 	};
 
 	Shape.prototype.getNextSamples = function(samplesPerMeasure) {
-		//TODO do this out of the audio loop
+		//TODO PERF: do this out of the audio loop
 		var samplesPerSegment = samplesPerMeasure * Math.pow(2, this.size) / this.segmentsNumber;
 
 		var reader = this.segmentsReaders[this.currentSegment];
@@ -77,13 +89,14 @@
 		var sampleValue = [0,0];
 
 		if(reader) {
+			//TODO PERF: calculate the right and left gain out of the audio loop
 			sampleValue[0] = reader(
 				this.audioBuffer,
 				0,
 				this.currentSegmentPosition,
 				this.speed,
 				samplesPerSegment
-			) * this.gain;
+			) * this.gain * ( 1 - Math.max(-0.1, this.pan) * 0.9);
 
 			sampleValue[1] = reader(
 				this.audioBuffer,
@@ -91,7 +104,7 @@
 				this.currentSegmentPosition,
 				this.speed,
 				samplesPerSegment
-			) * this.gain;
+			) * this.gain * ( 1 + Math.min(0.1, this.pan) * 0.9);
 		}
 
 		this.currentSegmentPosition++;
