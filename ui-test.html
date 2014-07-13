@@ -4,6 +4,16 @@
         <link rel="stylesheet" type="text/css" href="css/style.css" />
         <script type="text/javascript" src="js/vendors/lodash/lodash.min.js"></script>
         <script type="text/javascript" src="js/vendors/snap.svg/snap.svg.min.js"></script>
+        <script type="text/javascript" src="js/vendors/recorderjs/recorder.js"></script>
+        <script type="text/javascript" src="js/vendors/lodash/lodash.min.js"></script>
+        <script type="text/javascript" src="js/vendors/aural.js/aural.min.js"></script>
+        <script type="text/javascript" src="js/app/app.js"></script>
+        <script type="text/javascript" src="js/app/app.audioengine.js"></script>
+        <script type="text/javascript" src="js/app/app.readers.js"></script>
+        <script type="text/javascript" src="js/app/app.shape.js"></script>
+        <script type="text/javascript" src="js/app/app.shapemanager.js"></script>
+        <script type="text/javascript" src="js/app/app.bufferbank.js"></script>
+        <script type="text/javascript" src="js/app/app.ui.shape.js"></script>
         <script type="text/javascript">
             function createButton(className, label, icon) {
                 var button = document.createElement('button');
@@ -52,58 +62,11 @@
                 return popup
             }
 
-            var ShapeSvg = function(width, size, segments) {
-                this.svg = new Snap(width, width);
-                this.width = width;
-                this.size = size;
-                this.segments = segments;
-                this.refresh();
-            };
-
-            ShapeSvg.prototype.createShape = function() {
-                var w = this.width,
-                    p = this.segments,
-                    c = w / 2,
-                    r = (this.width - 1) / (this.size + 1);
-
-                var shape;
-
-                if(p == 1) {
-                    shape = this.svg.circle(c, c, r - c / 5);
-                } else {
-                    var points = [];
-
-                    r = r - 3 * p - 3;
-
-                    for (var cp = 1; cp <= p; cp++) {
-                        points.push(c + r * Math.sin(cp * Math.PI / p * 2));
-                        points.push(c + r * Math.cos(cp * Math.PI / p * 2));
-                    }
-
-                    shape = this.svg.polygon(points);
-                }
-
-                return shape;
-            };
-
-            ShapeSvg.prototype.refresh = function() {
-                this.shape = this.createShape().attr({
-                    fill: "#000",
-                    fillOpacity : 0,
-                    stroke: "#000",
-                    strokeWidth: 2
-                });
-
-                this.shape.animate({
-                    fillOpacity: 1
-                }, 500);
-            };
-
             function runSnap() {
                 var container = document.getElementById('container');
                 container.addEventListener('click', function() {
-                    var svg = new ShapeSvg(200, 1, 3);
-                    container.appendChild(svg.svg.node);
+                    var svg = new App.UI.Shape(200, 1, 3);
+                    container.appendChild(svg.element);
                 });
 
             }
