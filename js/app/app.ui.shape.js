@@ -50,13 +50,27 @@
 		}, 500);
 	};
 
-	var Shape = function(width, size, segments) {
-		this.element = document.createElement('div');
-		this.element.className = 'shape';
-		this.element.style.width = width + 'px';
-		this.element.style.height = width + 'px';
+	var Shape = function(width, size, segments, container) {
+		this.createElement(width);
 		this.svg = new ShapeSvg(width, size, segments);
 		this.element.appendChild(this.svg.svg.node);
+		this.draggable = new Draggabilly(this.element, {
+			containment : container,
+			handle : 'polygon, circle'
+		});
+	};
+
+	Shape.prototype.createElement = function(width) {
+		this.element = document.createElement('div');
+		this.element.className = 'shape';
+		this.element.style.top = '0px';
+		this.element.style.left = '0px';
+		this.element.style.width = width + 'px';
+		this.element.style.height = width + 'px';
+
+		this.element.addEventListener('click', function(e) {
+			e.stopPropagation();
+		}.bind(this));
 	};
 
 	App.UI = App.UI || {};

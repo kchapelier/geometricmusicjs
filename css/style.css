@@ -28,6 +28,8 @@ button {
     line-height:28px;
     letter-spacing: 1px;
     font-size: 15px;
+    outline : none;
+    cursor: pointer;
     transition:background-color .5s, border .5s;
     font-weight:300;
 }
@@ -74,6 +76,7 @@ button.stopRecording {
     height:30px;
     line-height:30px;
     background:#FFF;
+    cursor : default;
 }
 
 .label-value .label {
@@ -141,6 +144,10 @@ button.stopRecording {
 
 body:hover .main {
     border-color:#D6D6D6;
+}
+
+.main .shape {
+    position : absolute;
 }
 
 /* endregion */
