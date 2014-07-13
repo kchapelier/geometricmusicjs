@@ -3,8 +3,8 @@
 
 	//TODO prototype properties for most of the objects here are not properly declared (¬‿¬)
 
-	var ShapeSvg = function(width, shape) {
-		this.shape = shape;
+	var ShapeSvg = function(width, shapeUi) {
+		this.shapeUi = shapeUi;
 		this.svg = new Snap(width, width);
 		this.width = width;
 		this.refresh();
@@ -12,21 +12,22 @@
 
 	ShapeSvg.prototype.createShape = function() {
 		var w = this.width,
-			p = this.shape.segmentsNumber,
+			p = this.shapeUi.shape.segmentsNumber,
 			c = w / 2,
-			r = (this.width - 2) / (this.shape.size + 1);
+			r = (this.width - 2) / (4 - this.shapeUi.shape.size / 2),
+			points;
 
 		var shape;
 
 		if(p === 1) {
-			shape = this.svg.circle(c, c, r - c / 5);
+			shape = this.svg.circle(c, c, r - c / 3);
 		} else if(p === 2) {
 			// out of desperation, draw a narrow losange
-			var points = [c + r, c, c, c - r / 4, c - r, c, c, c + r / 4];
+			points = [c + r, c, c, c - r / 4, c - r, c, c, c + r / 4];
 
 			shape = this.svg.polygon(points);
 		} else {
-			var points = [];
+			points = [];
 
 			r = r - 3 * p - 3;
 
@@ -42,7 +43,11 @@
 	};
 
 	ShapeSvg.prototype.refresh = function() {
-		this.shape = this.createShape().attr({
+		if(this.shapeNode) {
+			this.shapeNode.remove();
+		}
+
+		this.shapeNode = this.createShape().attr({
 			fill: "#000",
 			fillOpacity : 0,
 			stroke: "#000",
@@ -52,23 +57,36 @@
 		//TODO set the element size to the polygon/circle size
 	};
 
-	ShapeSvg.prototype.fill = function() {
-		this.shape.animate({
-			fillOpacity: 1,
-			strokeWidth : 1
-		}, 250);
+	ShapeSvg.prototype.fill = function(animate) {
+		if(animate) {
+			this.shapeNode.animate({
+				fillOpacity: 1,
+				strokeWidth: 1
+			}, 250);
+		} else {
+			this.shapeNode.attr({
+				fillOpacity: 1,
+				strokeWidth: 1
+			});
+		}
 	};
 
-	ShapeSvg.prototype.unfill = function() {
-		this.shape.animate({
-			fillOpacity: 0,
-			strokeWidth : 4
-		}, 200);
+	ShapeSvg.prototype.unfill = function(animate) {
+		if(animate) {
+			this.shapeNode.animate({
+				fillOpacity: 0,
+				strokeWidth : 4
+			}, 200);
+		} else {
+			this.shapeNode.attr({
+				fillOpacity: 0,
+				strokeWidth : 4
+			});
+		}
 	};
 
-	var ShapePanel = function(shape, svg) {
-		this.shape = shape;
-		this.svg = svg;
+	var ShapePanel = function(shapeUi) {
+		this.shapeUi = shapeUi;
 		this.createElement();
 		this.setEvents();
 	};
@@ -77,9 +95,9 @@
 		var element = document.createElement('div');
 		element.className = 'details';
 
-		this.size = App.UI.createLabelValue('size', 'Size', this.shape.size);
-		this.segmentsNumber = App.UI.createLabelValue('segmentsNumber', 'Segments', this.shape.segmentsNumber);
-		this.tuning = App.UI.createLabelValue('tuning', 'Tuning', this.shape.tuning + ' semitone' + (this.shape.tuning > 1 ? 's' : ''));
+		this.size = App.UI.createLabelValue('size', 'Size', this.shapeUi.shape.size);
+		this.segmentsNumber = App.UI.createLabelValue('segmentsNumber', 'Segments', this.shapeUi.shape.segmentsNumber);
+		this.tuning = App.UI.createLabelValue('tuning', 'Tuning', this.shapeUi.shape.tuning + ' semitone' + (this.shapeUi.shape.tuning > 1 ? 's' : ''));
 
 		element.appendChild(this.size);
 		element.appendChild(this.segmentsNumber);
@@ -90,20 +108,20 @@
 
 	ShapePanel.prototype.setEvents = function() {
 		this.tuning.addEventListener('click', function() {
-			this.shape.setTuning((this.shape.tuning + 13) % 25 + 1 - 13);
-			this.tuning.setValue(this.shape.tuning + ' semitone' + (this.shape.tuning > 1 ? 's' : ''));
+			this.shapeUi.shape.setTuning((this.shapeUi.shape.tuning + 13) % 25 + 1 - 13);
+			this.tuning.setValue(this.shapeUi.shape.tuning + ' semitone' + (this.shapeUi.shape.tuning > 1 ? 's' : ''));
 		}.bind(this));
 
 		this.size.addEventListener('click', function() {
-			this.shape.setSize((this.shape.size) % 4 + 1);
-			this.size.setValue(this.shape.size);
-			this.svg.refresh();
+			this.shapeUi.shape.setSize((this.shapeUi.shape.size) % 4 + 1);
+			this.size.setValue(this.shapeUi.shape.size);
+			this.shapeUi.refresh();
 		}.bind(this));
 
 		this.segmentsNumber.addEventListener('click', function() {
-			this.shape.setSegmentsNumber((this.shape.segmentsNumber) % 8 + 1);
-			this.segmentsNumber.setValue(this.shape.segmentsNumber);
-			this.svg.refresh();
+			this.shapeUi.shape.setSegmentsNumber((this.shapeUi.shape.segmentsNumber) % 8 + 1);
+			this.segmentsNumber.setValue(this.shapeUi.shape.segmentsNumber);
+			this.shapeUi.refresh();
 		}.bind(this));
 	};
 
@@ -111,12 +129,12 @@
 		this.createElement(width, container);
 		this.shape = shape;
 		this.selected = false;
-		this.svg = new ShapeSvg(width, shape);
-		this.panel = new ShapePanel(shape, this.svg);
+		this.svg = new ShapeSvg(width, this);
+		this.panel = new ShapePanel(this);
 		this.element.appendChild(this.svg.svg.node);
 		this.draggable = new Draggabilly(this.element, {
 			containment : container,
-			handle : 'polygon, circle'
+			handle : 'svg'
 		});
 
 		this.selectionCallback = selectionCallback;
@@ -149,16 +167,26 @@
 	Shape.prototype.select = function(selected) {
 		if(selected !== this.selected) {
 			if (selected) {
-				this.svg.fill();
+				this.svg.fill(true);
 				this.selected = true;
 
 				if(typeof this.selectionCallback === 'function') {
 					this.selectionCallback(this);
 				}
 			} else {
-				this.svg.unfill();
+				this.svg.unfill(true);
 				this.selected = false;
 			}
+		}
+	};
+
+	Shape.prototype.refresh = function() {
+		this.svg.refresh();
+
+		if(this.selected) {
+			this.svg.fill(false);
+		} else {
+			this.svg.unfill(false);
 		}
 	};
 
