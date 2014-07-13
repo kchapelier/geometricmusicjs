@@ -12,7 +12,6 @@ body, p, ul, ol, div, section {
     margin:0;
 }
 
-
 /* region Button */
 
 button {
@@ -24,8 +23,8 @@ button {
     border:none;
     color: #444;
     height:30px;
-    left:0px;
-    right:0px;
+    width:100%;
+    text-align:left;
     line-height:28px;
     letter-spacing: 1px;
     font-size: 15px;
@@ -37,11 +36,11 @@ button i {
     color: #BBB;
     transition: color .5s;
     font-size: 14px;
-    margin-right: 5px;
+    margin-right: 8px;
 }
 
 button:hover {
-    background-color:#F2F2F2;
+    background-color:#E9E9E9;
     color: #000;
 }
 
@@ -86,7 +85,7 @@ button.stopRecording {
 }
 
 .label-value:hover .label {
-    background-color:#F2F2F2;
+    background-color:#E9E9E9;
 }
 
 .label-value .value {
@@ -131,13 +130,17 @@ button.stopRecording {
     left:200px;
     right:0;
     height:100%;
-    border-left:2px solid #D6D6D6;
+    border-left:2px solid #FFF;
     background-color:#E9E9E9;
-    transition:background-color .5s;
+    transition:border-color .5s, background-color .5s;
 }
 
 .main:hover {
     background-color:#FFFFFF;
+}
+
+body:hover .main {
+    border-color:#D6D6D6;
 }
 
 /* endregion */
