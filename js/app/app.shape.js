@@ -16,12 +16,12 @@
 		this.currentSegmentPosition = 0;
 		this.currentSegment = 0;
 		this.segmentsReaders = [];
-		this.audioBuffer = audioBuffer;
 
 		this.setTuning(0);
 		this.setPan(0);
 		this.setGain(0.5);
 
+		this.setAudioBuffer(audioBuffer);
 		this.setSegmentsNumber(segmentsNumber);
 		this.setSize(size);
 	};
@@ -45,6 +45,12 @@
 	Shape.prototype.calculateStereoGain = function() {
 		this.leftGain = this.gain * ( 1 - Math.max(-0.1, this.pan) * 0.9);
 		this.rightGain = this.gain * ( 1 + Math.min(0.1, this.pan) * 0.9);
+
+		return this;
+	};
+
+	Shape.prototype.setAudioBuffer = function(audioBuffer) {
+		this.audioBuffer = audioBuffer;
 
 		return this;
 	};
@@ -100,7 +106,7 @@
 
 		var sampleValue = [0,0];
 
-		if(reader) {
+		if(reader && this.audioBuffer) {
 			sampleValue[0] = reader(
 				this.audioBuffer,
 				0,

@@ -104,8 +104,6 @@
 	Main.prototype.shapeSelectionHandler = function(shape) {
 		this.showPanel(shape.panel.element);
 
-		console.log(shape.element);
-
 		for(var i = 0; i < this.shapeElements.length; i++) {
 			if(this.shapeElements[i] !== shape) {
 				this.shapeElements[i].select(false);
@@ -114,8 +112,8 @@
 	};
 
 	Main.prototype.plusHandler = function() {
-		var shape = this.shapeManager.add(1, 2, 'chroma03');
-		var shapeElement = new App.UI.Shape(200, shape, this.container, this.shapeSelectionHandler.bind(this));
+		var shape = this.shapeManager.add(1, 2, null);
+		var shapeElement = new App.UI.Shape(200, shape, this.container, this.bufferBank.getBufferCollection(), this.shapeSelectionHandler.bind(this));
 		this.shapeElements.push(shapeElement);
 		this.container.appendChild(shapeElement.element);
 		shapeElement.select(true);

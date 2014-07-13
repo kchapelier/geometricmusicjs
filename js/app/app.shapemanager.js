@@ -17,10 +17,8 @@
 		var shape = null;
 		var buffer = this.bufferBank.getBuffer(bufferName);
 
-		if(buffer) {
-			shape = new App.Shape(size, numberSegments, buffer);
-			this.collection.push(shape);
-		}
+		shape = new App.Shape(size, numberSegments, buffer);
+		this.collection.push(shape);
 
 		return shape;
 	};

@@ -86,8 +86,9 @@
 		}
 	};
 
-	var ShapePanel = function(shapeUi) {
+	var ShapePanel = function(shapeUi, bufferCollection) {
 		this.shapeUi = shapeUi;
+		this.bufferCollection = bufferCollection;
 		this.createElement();
 		this.setEvents();
 	};
@@ -96,13 +97,28 @@
 		var element = document.createElement('div');
 		element.className = 'details';
 
+		this.sample = App.UI.createLabelValue('sample', 'Sample', '---');
 		this.size = App.UI.createLabelValue('size', 'Size', this.shapeUi.shape.size);
 		this.segmentsNumber = App.UI.createLabelValue('segmentsNumber', 'Segments', this.shapeUi.shape.segmentsNumber);
-		this.tuning = App.UI.createLabelValue('tuning', 'Tuning', this.shapeUi.shape.tuning + ' semitone' + (this.shapeUi.shape.tuning > 1 ? 's' : ''));
+		this.tuning = App.UI.createLabelValue('tuning', 'Tuning', this.shapeUi.shape.tuning + ' semitone' + (Math.abs(this.shapeUi.shape.tuning) > 1 ? 's' : ''));
 
+		element.appendChild(this.sample);
 		element.appendChild(this.size);
 		element.appendChild(this.segmentsNumber);
 		element.appendChild(this.tuning);
+
+		this.readers = [];
+
+		for(var i = 0; i < 8; i++) {
+			var r = App.UI.createLabelValue('reader', 'Vector ' + (i + 1), 'default');
+			element.appendChild(r);
+
+			if(this.shapeUi.shape.size < i) {
+				r.style.opacity = 0;
+			}
+
+			this.readers.push(r);
+		}
 
 		this.element = element;
 	};
@@ -110,7 +126,7 @@
 	ShapePanel.prototype.setEvents = function() {
 		this.tuning.addEventListener('click', function() {
 			this.shapeUi.shape.setTuning((this.shapeUi.shape.tuning + 13) % 25 + 1 - 13);
-			this.tuning.setValue(this.shapeUi.shape.tuning + ' semitone' + (this.shapeUi.shape.tuning > 1 ? 's' : ''));
+			this.tuning.setValue(this.shapeUi.shape.tuning + ' semitone' + (Math.abs(this.shapeUi.shape.tuning) > 1 ? 's' : ''));
 		}.bind(this));
 
 		this.size.addEventListener('click', function() {
@@ -120,18 +136,55 @@
 		}.bind(this));
 
 		this.segmentsNumber.addEventListener('click', function() {
+			var oldNumber = this.shapeUi.shape.segmentsNumber;
 			this.shapeUi.shape.setSegmentsNumber((this.shapeUi.shape.segmentsNumber) % 8 + 1);
 			this.segmentsNumber.setValue(this.shapeUi.shape.segmentsNumber);
+
+			for(var i = 0; i < this.readers.length; i++) {
+				if(i < this.shapeUi.shape.segmentsNumber) {
+					this.readers[i].style.opacity = 1;
+
+					if(i >= oldNumber) {
+						this.readers[i].setValue('default');
+					}
+				} else {
+					this.readers[i].style.opacity = 0;
+				}
+			}
+
 			this.shapeUi.refresh();
+		}.bind(this));
+
+		var samplesKey = Object.keys(this.bufferCollection);
+		var currentSample = -1;
+
+		this.sample.addEventListener('click', function() {
+			currentSample = (currentSample + 1) % samplesKey.length;
+			var sampleId = samplesKey[currentSample];
+			this.shapeUi.shape.setAudioBuffer(this.bufferCollection[sampleId]);
+			this.sample.setValue(sampleId);
+		}.bind(this));
+
+		var readersKey = Object.keys(App.Readers);
+		readersKey.splice(readersKey.indexOf('default'), 1);
+
+		this.readers.forEach(function(r, index) {
+			var currentReader = readersKey.indexOf('normal');
+			r.addEventListener('click', function() {
+				currentReader = (currentReader + 1) % readersKey.length;
+				var readerId = readersKey[currentReader];
+				this.shapeUi.shape.setSegmentReader(index, App.Readers[readerId]);
+				r.setValue(readerId);
+			}.bind(this));
 		}.bind(this));
 	};
 
-	var Shape = function(width, shape, container, selectionCallback) {
+	var Shape = function(width, shape, container, bufferCollection, selectionCallback) {
 		this.createElement(width, container);
 		this.shape = shape;
 		this.selected = false;
 		this.svg = new ShapeSvg(width, this);
-		this.panel = new ShapePanel(this);
+		this.panel = new ShapePanel(this, bufferCollection);
 		this.element.appendChild(this.svg.svg.node);
 		this.draggable = new Draggabilly(this.element, {
 			containment : container,
