@@ -104,6 +104,8 @@ button.stopRecording {
 /* region Sidebar */
 
 .sidebar {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
     position:fixed;
     display:block;
     left:0;
@@ -129,6 +131,8 @@ button.stopRecording {
 /* region Main */
 
 .main {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
     position:fixed;
     left:200px;
     right:0;

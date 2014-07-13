@@ -51,10 +51,11 @@
 			fill: "#000",
 			fillOpacity : 0,
 			stroke: "#000",
-			strokeWidth: 4
+			strokeWidth: 2
 		});
 
 		//TODO set the element size to the polygon/circle size
+		//actually, the only way to fix the clicks is to make all the polygons in a single svg context.
 	};
 
 	ShapeSvg.prototype.fill = function(animate) {
@@ -75,12 +76,12 @@
 		if(animate) {
 			this.shapeNode.animate({
 				fillOpacity: 0,
-				strokeWidth : 4
+				strokeWidth : 2
 			}, 200);
 		} else {
 			this.shapeNode.attr({
 				fillOpacity: 0,
-				strokeWidth : 4
+				strokeWidth : 2
 			});
 		}
 	};
@@ -134,7 +135,7 @@
 		this.element.appendChild(this.svg.svg.node);
 		this.draggable = new Draggabilly(this.element, {
 			containment : container,
-			handle : 'svg'
+			handle : 'polygon, circle'
 		});
 
 		this.selectionCallback = selectionCallback;
@@ -152,10 +153,14 @@
 		this.element.style.height = width + 'px';
 	};
 
-	Shape.prototype.setEvents = function() {
-		this.element.addEventListener('mousedown', function(e) {
+	Shape.prototype.setNodeEvent = function() {
+		this.svg.shapeNode.node.addEventListener('mousedown', function() {
 			this.select(true);
 		}.bind(this));
+	};
+
+	Shape.prototype.setEvents = function() {
+		this.setNodeEvent();
 
 		this.draggable.on('dragMove', function(d, e) {
 			var pan = Math.min(Math.max(0, d.position.x / (d.containerSize.innerWidth - d.size.width)), 1) * 2 -1;
@@ -182,6 +187,8 @@
 
 	Shape.prototype.refresh = function() {
 		this.svg.refresh();
+		this.draggable.setHandles();
+		this.setNodeEvent();
 
 		if(this.selected) {
 			this.svg.fill(false);
