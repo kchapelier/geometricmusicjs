@@ -5,7 +5,7 @@
 		this.playing = false;
 		this.recording = false;
 		this.sampleRate = Aural.Utils.Support.getSampleRate();
-		this.bufferSize = bufferSize || 1024;
+		this.bufferSize = bufferSize || 4096;
 		this.shapeCollection = [];
 
 		this.setBpm(120);
@@ -17,7 +17,6 @@
 		this.compressor.knee.value = 35;
 		this.processor = this.audioContext.createScriptProcessor(this.bufferSize, 0, 2);
 		this.processor.onaudioprocess = this.audioProcessHandler.bind(this);
-		this.compressor.connect(this.audioContext.destination);
 		this.processor.connect(this.compressor);
 	};
 
@@ -77,18 +76,20 @@
 
 	AudioEngine.prototype.start = function() {
 		this.playing = true;
+		this.compressor.connect(this.audioContext.destination);
 	};
 
 	AudioEngine.prototype.stop = function() {
 		this.stopRecording();
 		this.playing = false;
+		this.compressor.disconnect(this.audioContext.destination);
 	};
 
 	AudioEngine.prototype.startRecording = function() {
 		if(!this.recorder) {
 			this.recorder = new Recorder(this.compressor, {
 				workerPath : 'js/vendors/recorderjs/recorderWorker.js',
-				bufferLen : 4096
+				bufferLen : 4096 * 2
 			});
 		}
 
