@@ -12,8 +12,8 @@
 
 		this.audioContext = Aural.Utils.Support.getAudioContext();
 		this.compressor = this.audioContext.createDynamicsCompressor();
-		this.compressor.attack.value = 0.02;
-		this.compressor.threshold.value = -20;
+		this.compressor.attack.value = 0.01;
+		this.compressor.threshold.value = -24;
 		this.compressor.knee.value = 35;
 		this.processor = this.audioContext.createScriptProcessor(this.bufferSize, 0, 2);
 		this.processor.onaudioprocess = this.audioProcessHandler.bind(this);

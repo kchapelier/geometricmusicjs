@@ -16,12 +16,14 @@
 			return 0;
 		},
 		normal : function(buffer, channel, position, speed, samplesPerSegment) {
+			var gain = Math.min(1, (samplesPerSegment - position) / 50);
 			position = position * speed;
-			return read(buffer, channel, position);
+			return read(buffer, channel, position) * gain;
 		},
 		reverse : function(buffer, channel, position, speed, samplesPerSegment) {
+			var gain = Math.min(1, position / 50);
 			position = (samplesPerSegment - position) * speed;
-			return read(buffer, channel, position);
+			return read(buffer, channel, position) * gain;
 		},
 		loopback : function(buffer, channel, position, speed, samplesPerSegment) {
 			position = (position < samplesPerSegment / 2 ? position : samplesPerSegment - position) * speed;
@@ -36,14 +38,16 @@
 			return read(buffer, channel, position);
 		},
 		vinylStart : function(buffer, channel, position, speed, samplesPerSegment) {
+			var gain = Math.min(1, (samplesPerSegment - position) / 50);
 			var ratio = position / samplesPerSegment;
 			position = Math.pow(ratio, 5/6) * samplesPerSegment * speed; //TODO doesnt work too well
-			return read(buffer, channel, position);
+			return read(buffer, channel, position) * gain;
 		},
 		vinylStop : function(buffer, channel, position, speed, samplesPerSegment) {
+			var gain = Math.min(1, (samplesPerSegment - position) / 50);
 			var ratio = position / samplesPerSegment;
 			position = Math.pow(1 - ratio, 6/5) * samplesPerSegment * speed; //TODO doesnt work too well
-			return read(buffer, channel, position);
+			return read(buffer, channel, position) * gain;
 		}
 	};
 

@@ -1,13 +1,13 @@
 (function(App) {
 	"use strict";
 
-	var createButton = function(className, label, icon) {
+	var createButton = function(className, label, icon, spinningIcon) {
 		var button = document.createElement('button');
 		button.className = className;
 
 		if(icon) {
 			var i = document.createElement('i');
-			i.className = 'fa fa-' + icon + ' fa-sw';
+			i.className = 'fa fa-' + icon + ' fa-fw' + (spinningIcon ? ' fa-spin' : '');
 			button.appendChild(i);
 		}
 
