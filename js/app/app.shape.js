@@ -13,15 +13,14 @@
 	};
 
 	var Shape = function(size, segmentsNumber, audioBuffer) {
+		this.currentSegmentPosition = 0;
+		this.currentSegment = 0;
 		this.segmentsReaders = [];
 		this.audioBuffer = audioBuffer;
 
 		this.setTuning(0);
-
-		this.pan = 0;
-		this.gain = 0.5;
-		this.currentSegmentPosition = 0;
-		this.currentSegment = 0;
+		this.setPan(0);
+		this.setGain(0.5);
 
 		this.setSegmentsNumber(segmentsNumber);
 		this.setSize(size);
@@ -40,6 +39,17 @@
 	Shape.prototype.currentSegment = null;
 	Shape.prototype.currentSegmentPosition = null;
 
+	Shape.prototype.leftGain = null;
+	Shape.prototype.rightGain = null;
+
+	Shape.prototype.calculateStereoGain = function() {
+		this.leftGain = this.gain * ( 1 - Math.max(-0.1, this.pan) * 0.9);
+		this.rightGain = this.gain * ( 1 + Math.min(0.1, this.pan) * 0.9);
+
+		return this;
+	};
+
+
 	Shape.prototype.setSize = function(size) {
 		this.size = Math.max(1, size);
 
@@ -55,12 +65,14 @@
 
 	Shape.prototype.setGain = function(gain) {
 		this.gain = Math.min(1, Math.max(0, gain));
+		this.calculateStereoGain();
 
 		return this;
 	};
 
 	Shape.prototype.setPan = function(pan) {
 		this.pan = Math.min(1, Math.max(-1, pan));
+		this.calculateStereoGain();
 
 		return this;
 	};
@@ -89,14 +101,13 @@
 		var sampleValue = [0,0];
 
 		if(reader) {
-			//TODO PERF: calculate the right and left gain out of the audio loop
 			sampleValue[0] = reader(
 				this.audioBuffer,
 				0,
 				this.currentSegmentPosition,
 				this.speed,
 				samplesPerSegment
-			) * this.gain * ( 1 - Math.max(-0.1, this.pan) * 0.9);
+			) * this.leftGain;
 
 			sampleValue[1] = reader(
 				this.audioBuffer,
@@ -104,7 +115,7 @@
 				this.currentSegmentPosition,
 				this.speed,
 				samplesPerSegment
-			) * this.gain * ( 1 + Math.min(0.1, this.pan) * 0.9);
+			) * this.rightGain;
 		}
 
 		this.currentSegmentPosition++;
