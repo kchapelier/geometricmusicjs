@@ -43,7 +43,7 @@
 
 			var ratio = position / samplesPerSegment;
 
-			position = Math.sqrt(ratio) * samplesPerSegment * speed; //TODO does it works ?
+			position = Math.pow(ratio, 5/6) * samplesPerSegment * speed; //TODO does it works ?
 
 			if(buffer.length > position) {
 				sampleValue = buffer.getSample(position, channel);
@@ -56,7 +56,7 @@
 
 			var ratio = position / samplesPerSegment;
 
-			position = Math.pow(1 - ratio, 2) * samplesPerSegment * speed; //TODO does it works
+			position = Math.pow(1 - ratio, 6/5) * samplesPerSegment * speed; //TODO does it works
 
 			if(buffer.length > position) {
 				sampleValue = buffer.getSample(position, channel);
