@@ -27,10 +27,32 @@
 
 			return sampleValue;
 		},
+		loopback : function(buffer, channel, position, speed, samplesPerSegment) {
+			var sampleValue = 0;
+
+			position = (position < samplesPerSegment / 2 ? position : samplesPerSegment - position) * speed;
+
+			if(buffer.length > position) {
+				sampleValue = buffer.getSample(position, channel);
+			}
+
+			return sampleValue;
+		},
 		twoRepeats : function(buffer, channel, position, speed, samplesPerSegment) {
 			var sampleValue = 0;
 
-			position = (position % (samplesPerSegment / 2)) * speed; //TODO does it works ?
+			position = (position % (samplesPerSegment / 2)) * speed;
+
+			if(buffer.length > position) {
+				sampleValue = buffer.getSample(position, channel);
+			}
+
+			return sampleValue;
+		},
+		threeRepeats : function(buffer, channel, position, speed, samplesPerSegment) {
+			var sampleValue = 0;
+
+			position = (position % (samplesPerSegment / 3)) * speed;
 
 			if(buffer.length > position) {
 				sampleValue = buffer.getSample(position, channel);
